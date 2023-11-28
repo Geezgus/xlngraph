@@ -1,0 +1,6 @@
+# IDE - Visual Studio Code
+.vscode
+
+# Cache
+__pycache__
+.pytest_cache

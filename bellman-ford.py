@@ -12,10 +12,13 @@ def main():
         weight_column="weight",
     )
 
-    distance = G.bellman_ford(args.S)
+    distance, paths = G.bellman_ford(args.S)
 
     for k, v in distance.items():
         print(f"{k}: {v}")
+    
+    for child, parent in paths.items():
+        print(parent, '<-' , child)
 
 
 def parse_args():

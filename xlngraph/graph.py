@@ -103,12 +103,12 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
 
         return tree
 
-    def dijkstra(self, u: Vertex):
+    def dijkstra(self, s: Vertex):
         distance = {k: float("inf") for k in self.vertices()}
         previous = {k: None for k in self.vertices()}
         explored = {k: False for k in self.vertices()}
 
-        distance[u] = 0
+        distance[s] = 0
 
         while False in explored.values():
             # Get vertex v as the lightest-weighted unexplored vertex
@@ -127,7 +127,7 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
                     previous[w] = v
 
         def get_path(v: Vertex | None):
-            return str(u) if v is u else f"{v} <- {get_path(previous[v])}"
+            return str(s) if v is s else f"{v} <- {get_path(previous[v])}"
 
         paths = [get_path(v) for v in self.vertices()]
 
@@ -140,11 +140,12 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
         distance[s] = 0
 
         # Relax each edge |V-1| times
-        for u in self.vertices():
-            for v in self.adjacency(u):
-                if distance[v] > distance[u] + self.get_edge_weight(u, v):
-                    distance[v] = distance[u] + self.get_edge_weight(u, v)
-                    previous[v] = u
+        for _ in range(len(self.vertices()) - 1):
+            for u in self.vertices():
+                for v in self.adjacency(u):
+                    if distance[v] > distance[u] + self.get_edge_weight(u, v):
+                        distance[v] = distance[u] + self.get_edge_weight(u, v)
+                        previous[v] = u
 
         # Detect negative cycle
         for u in self.vertices():
@@ -152,7 +153,7 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
                 if distance[v] > distance[u] + self.get_edge_weight(u, v):
                     distance[v] = float("-inf")
 
-        return distance
+        return distance, previous
 
     def add_vertex(self, v: Vertex):
         if v in self:

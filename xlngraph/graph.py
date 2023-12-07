@@ -155,6 +155,35 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
 
         return distance, previous
 
+    def floyd_warshall(self):
+        distance = {
+            i: {j: float("inf") for j in self.vertices()} for i in self.vertices()
+        }
+
+        for i in distance:
+            distance[i][i] = 0
+
+        for u in self.vertices():
+            for v in self.adjacency(u):
+                distance[u][v] = self.get_edge_weight(u, v)
+
+        previous = {
+            i: {
+                j: i if i != j and distance[i][j] < float("inf") else None
+                for j in self.vertices()
+            }
+            for i in self.vertices()
+        }
+
+        for k in self.vertices():
+            for i in self.vertices():
+                for j in self.vertices():
+                    if distance[i][j] > distance[i][k] + distance[k][j]:
+                        distance[i][j] = distance[i][k] + distance[k][j]
+                        previous[i][j] = previous[k][j]
+
+        return distance, previous
+
     def add_vertex(self, v: Vertex):
         if v in self:
             return

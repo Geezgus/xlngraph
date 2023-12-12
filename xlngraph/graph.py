@@ -156,17 +156,23 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
         return distance, previous
 
     def floyd_warshall(self):
+        # Inicializar, como infinito, toda distância na matriz de distâncias
         distance = {
             i: {j: float("inf") for j in self.vertices()} for i in self.vertices()
-        }
+            }
 
+        # Atualizar, para 0, toda distância de um vértice V para ele mesmo
         for i in distance:
             distance[i][i] = 0
 
+        # Atualizar, como o peso da aresta, toda distância de U para V, para cada aresta (U, V)
         for u in self.vertices():
             for v in self.adjacency(u):
                 distance[u][v] = self.get_edge_weight(u, v)
 
+        # Inicializar o pai de cada vértice j na arvore de origem i na matriz
+        # i, se i != j e distancia(i, j) < infinito.
+        # NULO, do contrário
         previous = {
             i: {
                 j: i if i != j and distance[i][j] < float("inf") else None
@@ -175,6 +181,11 @@ class Graph(dict[Vertex, dict[Vertex, Weight]]):
             for i in self.vertices()
         }
 
+        # Atualizar distancia de cada aresta (i, j) para cada matriz k
+        # distancia(i, j) = minimo(distancia(i, j), distancia(i, k) + distancia(k, j))
+
+        # Atualizar o pai do vértice j na arvore de origem i, de cada matriz
+        # pai(i, j) = pai(k, j), se a distancia for atualizada. pai(i, j) do contrário.
         for k in self.vertices():
             for i in self.vertices():
                 for j in self.vertices():
